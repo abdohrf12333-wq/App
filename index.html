@@ -3,92 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <title>MyTunnel</title>
+
 <style>
 body{
-    background:#0f172a;
+    background:#111;
     color:white;
-    font-family:Arial;
     text-align:center;
-    margin:0;
-    padding-top:40px;
-}
-
-.box{
-    background:#1e293b;
-    width:90%;
-    margin:auto;
-    padding:20px;
-    border-radius:15px;
+    font-family:Arial;
+    margin-top:50px;
 }
 
 button{
-    width:200px;
     padding:15px;
     margin:10px;
+    width:220px;
+    font-size:18px;
     border:none;
     border-radius:10px;
-    font-size:18px;
-}
-
-.on{ background:#00ff88; }
-.off{ background:#ff4444; }
-select{
-    padding:10px;
-    font-size:16px;
-    margin:10px;
+    background:#00ff88;
 }
 </style>
 </head>
 
 <body>
 
-<h1>MyTunnel</h1>
+<h1>MyTunnel App</h1>
 
-<div class="box">
+<button onclick="goPage()">افتح الصفحة الثانية</button>
+<button onclick="showMessage()">اظهر رسالة</button>
 
-<h3 id="status">Status: OFF</h3>
-
-<select id="server">
-<option>Germany</option>
-<option>USA</option>
-<option>France</option>
-<option>Japan</option>
-</select>
-
-<br>
-
-<button class="on" onclick="connect()">CONNECT</button>
-<button class="off" onclick="disconnect()">DISCONNECT</button>
-
-<h3 id="timer">00:00</h3>
-
-</div>
-
-<script>
-
-let time = 0;
-let interval;
-
-function connect(){
-    document.getElementById("status").innerText = "Status: CONNECTED";
-    interval = setInterval(() => {
-        time++;
-        let minutes = Math.floor(time / 60);
-        let seconds = time % 60;
-        document.getElementById("timer").innerText =
-        (minutes<10?"0":"")+minutes + ":" +
-        (seconds<10?"0":"")+seconds;
-    },1000);
-}
-
-function disconnect(){
-    document.getElementById("status").innerText = "Status: OFF";
-    clearInterval(interval);
-    time = 0;
-    document.getElementById("timer").innerText = "00:00";
-}
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
