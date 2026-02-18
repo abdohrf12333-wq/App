@@ -7,5 +7,5 @@ function backHome(){
 }
 
 function showMessage(){
-    alert("التطبيق شغال 100% من GitHub 🔥");
+    alert("التطبيق شغال من GitHub 🔥");
 }
