@@ -1,44 +1,27 @@
-let servers = [
-    "🇺🇸 USA Server",
-    "🇩🇪 Germany Server",
-    "🇯🇵 Japan Server",
-    "🇫🇷 France Server"
-];
+let status = document.querySelector(".status");
+let serverText = document.getElementById("server");
+let btn = document.getElementById("btn");
 
-let selectedServer = localStorage.getItem("server");
+let selected = null;
 
-function loadServers(){
-    let list = document.getElementById("servers");
-
-    servers.forEach(s=>{
-        let li = document.createElement("li");
-        li.innerText = s;
-        li.onclick = ()=>{
-            selectedServer = s;
-            localStorage.setItem("server", s);
-            document.getElementById("server").innerText = s;
-        }
-        list.appendChild(li);
-    });
-
-    if(selectedServer){
-        document.getElementById("server").innerText = selectedServer;
-    }
+function selectServer(s){
+    selected = s;
+    serverText.innerText = s;
 }
 
-function connectVPN(){
-    if(!selectedServer){
-        alert("اختار سيرفر الاول");
+function connect(){
+    if(!selected){
+        alert("اختار سيرفر");
         return;
     }
 
-    let status = document.getElementById("status");
-
     if(status.innerText === "غير متصل"){
         status.innerText = "متصل";
+        status.style.color = "#00ff99";
+        btn.innerText = "فصل";
     }else{
         status.innerText = "غير متصل";
+        status.style.color = "#ff4d4d";
+        btn.innerText = "اتصال";
     }
 }
-
-loadServers();
