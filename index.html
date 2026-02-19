@@ -2,25 +2,31 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>MyTunnel Manager</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyTunnel VPN</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>MyTunnel VPN</h1>
+<div class="app">
 
-<div class="card">
-    <h2>الحالة: <span id="status">غير متصل</span></h2>
-    <p>السيرفر المختار: <span id="server">لا يوجد</span></p>
+    <h1>MyTunnel VPN</h1>
+
+    <div class="statusCard">
+        <p class="status">غير متصل</p>
+        <p id="server">لا يوجد سيرفر</p>
+    </div>
+
+    <div class="servers">
+        <div onclick="selectServer('🇺🇸 USA')" class="server">🇺🇸 USA</div>
+        <div onclick="selectServer('🇩🇪 Germany')" class="server">🇩🇪 Germany</div>
+        <div onclick="selectServer('🇯🇵 Japan')" class="server">🇯🇵 Japan</div>
+    </div>
+
+    <button onclick="connect()" id="btn">اتصال</button>
+
 </div>
-
-<div class="card">
-    <h2>اختار سيرفر</h2>
-    <ul id="servers"></ul>
-</div>
-
-<button onclick="connectVPN()" class="connectBtn">اتصال</button>
 
 <script src="script.js"></script>
 </body>
