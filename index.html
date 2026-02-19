@@ -1,94 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>MyTunnel</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:#0f172a;
-    color:white;
-    text-align:center;
-}
-
-.header{
-    padding:20px;
-    font-size:24px;
-    font-weight:bold;
-}
-
-.card{
-    background:#1e293b;
-    width:90%;
-    max-width:400px;
-    margin:20px auto;
-    padding:20px;
-    border-radius:20px;
-}
-
-select, button{
-    width:100%;
-    padding:12px;
-    margin:10px 0;
-    border:none;
-    border-radius:12px;
-    font-size:16px;
-}
-
-select{
-    background:#334155;
-    color:white;
-}
-
-.connect{
-    background:#00ff88;
-    font-weight:bold;
-}
-
-.disconnect{
-    background:#ff4444;
-    font-weight:bold;
-    color:white;
-}
-
-.status{
-    margin-top:15px;
-    font-size:18px;
-}
-
-.timer{
-    font-size:22px;
-    margin-top:10px;
-}
-</style>
+<title>MyTunnel Manager</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="header">MyTunnel VPN</div>
+<h1>MyTunnel VPN</h1>
 
 <div class="card">
-
-<select id="server">
-<option value="Germany">Germany</option>
-<option value="USA">USA</option>
-<option value="France">France</option>
-<option value="Japan">Japan</option>
-</select>
-
-<button class="connect" onclick="connect()">CONNECT</button>
-<button class="disconnect" onclick="disconnect()">DISCONNECT</button>
-
-<div class="status" id="status">Status: OFF</div>
-<div class="timer" id="timer">00:00</div>
-<div class="status" id="ip">IP: Loading...</div>
-
+    <h2>الحالة: <span id="status">غير متصل</span></h2>
+    <p>السيرفر المختار: <span id="server">لا يوجد</span></p>
 </div>
 
-<script src="script.js"></script>
+<div class="card">
+    <h2>اختار سيرفر</h2>
+    <ul id="servers"></ul>
+</div>
 
+<button onclick="connectVPN()" class="connectBtn">اتصال</button>
+
+<script src="script.js"></script>
 </body>
 </html>
