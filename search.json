@@ -1,0 +1,10 @@
+{
+  "nav": [
+    {"title": "الرئيسية", "target": "home.json"},
+    {"title": "بحث", "target": "search.json"},
+    {"title": "المكتبة", "target": "library.json"}
+  ],
+  "ui": [
+    {"type": "track", "title": "اكتب اسم الأغنية هنا...", "artist": "خانة البحث"}
+  ]
+}
