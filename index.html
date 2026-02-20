@@ -1,71 +1,441 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
-    <title>Nano Dashboard - مبرمج التطبيقات</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>منصة AIDE المتكاملة - تطوير التطبيقات</title>
+    <!-- استيراد مكتبة CodeMirror للمحرر -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <!-- دعم لغة Java (للأندرويد) ولكننا سنستخدم JavaScript للتوضيح -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script>
     <style>
-        body { background: #1a1a1a; color: white; font-family: sans-serif; display: flex; }
-        #login { position: fixed; inset: 0; background: black; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .editor-side { width: 60%; padding: 20px; }
-        .preview-side { width: 40%; background: #333; display: flex; justify-content: center; align-items: center; }
-        .phone { width: 300px; height: 600px; background: black; border: 10px solid #444; border-radius: 30px; overflow-y: auto; padding: 10px; }
-        textarea { width: 100%; height: 300px; background: #222; color: #0f0; border: 1px solid #555; }
-        button { padding: 10px 20px; cursor: pointer; background: #1DB954; border: none; color: white; font-weight: bold; }
-        .app-btn { width: 100%; margin: 5px 0; padding: 10px; background: #444; color: white; border: 1px solid #666; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: #1e1e2f;
+            color: #f8f8f2;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .app-bar {
+            background: #282a36;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #6272a4;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #50fa7b;
+        }
+        .btn-group button {
+            background: #44475a;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            margin-right: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+        .btn-group button:hover {
+            background: #6272a4;
+            transform: scale(0.98);
+        }
+        .main-container {
+            display: flex;
+            height: calc(100vh - 60px);
+            width: 100%;
+        }
+        /* الشريط الجانبي للمشروع */
+        .sidebar {
+            width: 220px;
+            background: #282a36;
+            padding: 15px;
+            overflow-y: auto;
+            border-left: 2px solid #44475a;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar h3 {
+            color: #ffb86c;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #6272a4;
+            padding-bottom: 5px;
+        }
+        .file-tree {
+            list-style: none;
+        }
+        .file-tree li {
+            padding: 8px 10px;
+            margin: 4px 0;
+            background: #44475a;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .file-tree li:hover {
+            background: #6272a4;
+        }
+        .file-tree li i {
+            color: #ffb86c;
+        }
+        /* منطقة العمل الرئيسية */
+        .workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1e1e2f;
+        }
+        /* شريط علامات التبويب */
+        .tabs {
+            background: #282a36;
+            display: flex;
+            padding: 5px 10px 0;
+            border-bottom: 2px solid #6272a4;
+        }
+        .tab {
+            background: #44475a;
+            color: #f8f8f2;
+            padding: 8px 16px;
+            margin-left: 5px;
+            border-radius: 8px 8px 0 0;
+            font-size: 0.9rem;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        .tab.active {
+            background: #6272a4;
+            opacity: 1;
+            font-weight: bold;
+        }
+        /* محرر الأكواد */
+        .editor-container {
+            flex: 3;
+            min-height: 0;
+            border-bottom: 2px solid #44475a;
+        }
+        .CodeMirror {
+            height: 100%;
+            font-size: 14px;
+        }
+        /* شاشة الأوامر (الكونسول) */
+        .console-panel {
+            flex: 1;
+            background: #0f0f1a;
+            padding: 10px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            border-top: 2px solid #6272a4;
+            direction: ltr;
+            text-align: left;
+        }
+        .console-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #8be9fd;
+            font-weight: bold;
+        }
+        .console-output {
+            color: #f1fa8c;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .console-input-line {
+            display: flex;
+            margin-top: 10px;
+            align-items: center;
+            color: #50fa7b;
+        }
+        .prompt {
+            margin-left: 5px;
+        }
+        #commandInput {
+            flex: 1;
+            background: #282a36;
+            border: 1px solid #6272a4;
+            color: #f8f8f2;
+            padding: 6px;
+            border-radius: 4px;
+            outline: none;
+            font-family: monospace;
+        }
+        .apk-badge {
+            background: #ff5555;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        /* رسالة منبثقة */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #50fa7b;
+            color: #1e1e2f;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 9999;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none; /* في الجوال يمكن إظهاره عبر قائمة */
+            }
+            .main-container {
+                flex-direction: column;
+            }
+            .app-bar {
+                flex-wrap: wrap;
+            }
+        }
     </style>
 </head>
 <body>
-
-<div id="login">
-    <h2>أدخل كلمة السر للدخول للبرمجة</h2>
-    <input type="password" id="pass" placeholder="Password">
-    <button onclick="checkPass()">دخول</button>
-</div>
-
-<div class="editor-side">
-    <h1>لوحة التحكم في التطبيق</h1>
-    <textarea id="jsonCode">
-{
-  "body": [
-    { "type": "text", "val": "مرحباً بك في تطبيقي" },
-    { "type": "btn", "val": "زرار تجريبي" }
-  ]
-}
-    </textarea><br><br>
-    <button onclick="updatePreview()">تحديث المعاينة (Preview)</button>
-    <button onclick="saveToCloud()">حفظ ونشر للتطبيق (Publish)</button>
-    <hr>
-    <a href="Your_APK_Link.apk" style="color: yellow;">⬇️ تحميل نسخة الـ APK الحالية</a>
-</div>
-
-<div class="preview-side">
-    <div class="phone" id="phonePreview">
+    <!-- شريط التطبيق العلوي -->
+    <div class="app-bar">
+        <div class="logo">☕ AIDE • بيئة تطوير متكاملة</div>
+        <div class="btn-group">
+            <button id="runBtn">▶ تشغيل الكود</button>
+            <button id="buildApkBtn" class="apk-badge">📦 بناء APK</button>
+            <button id="saveBtn">💾 حفظ</button>
         </div>
-</div>
+    </div>
 
-<script>
-    function checkPass() {
-        if(document.getElementById('pass').value === "1234") { // كلمة السر الخاصة بك
-            document.getElementById('login').style.display = "none";
-        }
-    }
+    <!-- المحتوى الرئيسي -->
+    <div class="main-container">
+        <!-- الشريط الجانبي للمشروع -->
+        <div class="sidebar">
+            <h3>📁 مشروع التطبيق</h3>
+            <ul class="file-tree">
+                <li><i>📄</i> MainActivity.java</li>
+                <li><i>📄</i> AndroidManifest.xml</li>
+                <li><i>📄</i> activity_main.xml</li>
+                <li><i>📄</i> strings.xml</li>
+                <li><i>📁</i> drawable/</li>
+                <li><i>📁</i> layout/</li>
+            </ul>
+            <h3 style="margin-top:20px;">⚙️ الإضافات</h3>
+            <ul class="file-tree">
+                <li><i>🔌</i> محرك الأوامر</li>
+                <li><i>🔌</i> مترجم APK</li>
+                <li><i>🔌</i> معاينة XML</li>
+            </ul>
+        </div>
 
-    function updatePreview() {
-        const code = JSON.parse(document.getElementById('jsonCode').value);
-        const phone = document.getElementById('phonePreview');
-        phone.innerHTML = "";
-        code.body.forEach(item => {
-            if(item.type === "text") {
-                let p = document.createElement('p'); p.innerText = item.val; phone.appendChild(p);
-            } else if(item.type === "btn") {
-                let b = document.createElement('button'); b.className = "app-btn"; b.innerText = item.val; phone.appendChild(b);
-            }
+        <!-- منطقة العمل -->
+        <div class="workspace">
+            <!-- علامات التبويب -->
+            <div class="tabs">
+                <div class="tab active">MainActivity.java</div>
+                <div class="tab">activity_main.xml</div>
+                <div class="tab">AndroidManifest.xml</div>
+            </div>
+
+            <!-- محرر الأكواد -->
+            <div class="editor-container">
+                <textarea id="codeEditor">// هذا مثال لكود Android بسيط
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        // زر تجريبي
+        Button btn = findViewById(R.id.button);
+        btn.setOnClickListener(v -> {
+            System.out.println("مرحباً من AIDE!");
         });
     }
+}</textarea>
+            </div>
 
-    function saveToCloud() {
-        alert("تم الحفظ! التعديلات ستظهر في التطبيق فور فتحه.");
-        // هنا يتم ربط الموقع بـ GitHub API أو Server لحفظ الملف
-    }
-</script>
+            <!-- شاشة الأوامر (الكونسول) -->
+            <div class="console-panel" id="consolePanel">
+                <div class="console-header">
+                    <span>🖥️ وحدة الأوامر (Console)</span>
+                    <span style="color:#ff79c6;">أوامر مخصصة تظهر هنا</span>
+                </div>
+                <div id="consoleOutput" class="console-output">
+                    > النظام جاهز. اكتب 'help' لمعرفة الأوامر.
+                </div>
+                <div class="console-input-line">
+                    <span class="prompt">$</span>
+                    <input type="text" id="commandInput" placeholder="أدخل أمراً...">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- رسالة منبثقة للتوضيح -->
+    <div id="toastMessage" class="toast">تمت العملية بنجاح</div>
+
+    <script>
+        // إعداد CodeMirror
+        var editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
+            lineNumbers: true,
+            mode: 'text/x-java',  // تقريباً للغة Java (يدعمها CodeMirror باسم clike)
+            theme: 'dracula',
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            indentUnit: 4,
+            tabSize: 4,
+            lineWrapping: true,
+            direction: 'ltr', // الكود يكون من اليسار لليمين حتى لو الموقع عربي
+        });
+
+        // عناصر التحكم
+        const runBtn = document.getElementById('runBtn');
+        const buildBtn = document.getElementById('buildApkBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const consoleOutput = document.getElementById('consoleOutput');
+        const commandInput = document.getElementById('commandInput');
+        const toast = document.getElementById('toastMessage');
+
+        // دالة لعرض رسالة منبثقة
+        function showToast(text) {
+            toast.textContent = text;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // محاكاة إخراج الأوامر في الكونسول
+        function appendToConsole(text, isCommand = false) {
+            const prefix = isCommand ? '> ' : '';
+            consoleOutput.innerHTML += '\n' + prefix + text;
+            // تمرير تلقائي لآخر سطر
+            const panel = document.getElementById('consolePanel');
+            panel.scrollTop = panel.scrollHeight;
+        }
+
+        // تنفيذ الكود (محاكاة بسيطة باستخدام eval للـ JavaScript، لكن هنا الكود Java لا ينفذ)
+        // سنقوم بمحاكاة إظهار الأوامر
+        runBtn.addEventListener('click', () => {
+            const code = editor.getValue();
+            appendToConsole('📱 تنفيذ الكود...');
+            // هنا يمكن إضافة منطق محاكاة لأوامر Android
+            // بما أن الكود Java لا يمكن تنفيذه مباشرة، سنعطي رسالة توضيحية
+            setTimeout(() => {
+                appendToConsole('✅ تم تنفيذ الكود (محاكاة). الأوامر المخصصة:');
+                appendToConsole('   - onClickListener مسجل');
+                appendToConsole('   - تم عرض Toast افتراضي');
+            }, 500);
+            showToast('تم تشغيل المحاكاة');
+        });
+
+        // محاكاة بناء APK
+        buildBtn.addEventListener('click', () => {
+            appendToConsole('🔨 جاري بناء ملف APK...');
+            setTimeout(() => {
+                appendToConsole('✅ تم إنشاء APK بنجاح: app-debug.apk (محاكاة)');
+                appendToConsole('⚠️ ملاحظة: بناء APK حقيقي يحتاج إلى خادم Android SDK.');
+                showToast('تم بناء APK تجريبي');
+            }, 1500);
+        });
+
+        // حفظ الكود في localStorage
+        saveBtn.addEventListener('click', () => {
+            localStorage.setItem('aide_code', editor.getValue());
+            appendToConsole('💾 تم حفظ الكود محلياً.');
+            showToast('تم الحفظ');
+        });
+
+        // استرجاع الكود المحفوظ عند التحميل
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('aide_code');
+            if (saved) {
+                editor.setValue(saved);
+                appendToConsole('📂 تم تحميل آخر كود محفوظ.');
+            }
+        });
+
+        // معالجة الأوامر المكتوبة في شاشة الأوامر
+        commandInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const cmd = commandInput.value.trim();
+                if (cmd === '') return;
+                appendToConsole(cmd, true);
+                commandInput.value = '';
+
+                // معالجة بعض الأوامر الوهمية
+                if (cmd === 'help') {
+                    appendToConsole('الأوامر المتاحة:\n  help - عرض هذه المساعدة\n  clear - مسح الشاشة\n  run - تشغيل الكود (مثل زر التشغيل)\n  build - بناء APK\n  version - عرض الإصدار');
+                } else if (cmd === 'clear') {
+                    consoleOutput.innerHTML = '> تم مسح الشاشة.';
+                } else if (cmd === 'run') {
+                    runBtn.click();
+                } else if (cmd === 'build') {
+                    buildBtn.click();
+                } else if (cmd === 'version') {
+                    appendToConsole('AIDE Web v1.0.0 (محاكاة)');
+                } else {
+                    appendToConsole(`أمر غير معروف: ${cmd}. اكتب 'help' للمساعدة.`);
+                }
+            }
+        });
+
+        // تبديل علامات التبويب (مجرد تأثير وهمي)
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                // تغيير الكود بشكل وهمي حسب التبويب
+                if (this.innerText.includes('MainActivity')) {
+                    editor.setValue(`// MainActivity.java\npublic class MainActivity extends AppCompatActivity {\n    @Override\n    protected void onCreate(Bundle savedInstanceState) {\n        super.onCreate(savedInstanceState);\n        setContentView(R.layout.activity_main);\n    }\n}`);
+                } else if (this.innerText.includes('activity_main')) {
+                    editor.setValue(`<!-- activity_main.xml -->\n<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"\n    android:layout_width="match_parent"\n    android:layout_height="match_parent"\n    android:orientation="vertical">\n\n    <Button\n        android:id="@+id/button"\n        android:layout_width="wrap_content"\n        android:layout_height="wrap_content"\n        android:text="انقر هنا" />\n\n</LinearLayout>`);
+                } else if (this.innerText.includes('AndroidManifest')) {
+                    editor.setValue(`<!-- AndroidManifest.xml -->\n<manifest xmlns:android="http://schemas.android.com/apk/res/android"\n    package="com.example.myapp">\n\n    <application\n        android:allowBackup="true"\n        android:icon="@mipmap/ic_launcher"\n        android:label="@string/app_name">\n        <activity android:name=".MainActivity">\n            <intent-filter>\n                <action android:name="android.intent.action.MAIN" />\n                <category android:name="android.intent.category.LAUNCHER" />\n            </intent-filter>\n        </activity>\n    </application>\n\n</manifest>`);
+                }
+            });
+        });
+
+        // النقر على الملفات في الشجرة (تغيير المحتوى بشكل وهمي)
+        document.querySelectorAll('.file-tree li').forEach(item => {
+            item.addEventListener('click', function() {
+                const fileName = this.innerText.trim();
+                if (fileName.includes('MainActivity')) {
+                    // تفعيل التبويب المناسب
+                    tabs[0].click();
+                } else if (fileName.includes('AndroidManifest')) {
+                    tabs[2].click();
+                } else if (fileName.includes('activity_main')) {
+                    tabs[1].click();
+                } else {
+                    appendToConsole(`📂 تم فتح الملف: ${fileName} (محاكاة)`);
+                }
+            });
+        });
+
+        // جعل الكونسول قابلاً للتمرير بشكل طبيعي
+        // تنبيه: لا يمكن تحويل كود Java إلى APK حقيقياً في المتصفح، هذه واجهة محاكاة تعليمية.
+    </script>
+    <!-- إضافة أيقونات وهمية (اختياري) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </body>
 </html>
