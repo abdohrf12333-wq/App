@@ -1,13 +1,17 @@
-if (type.equals("img")) {
-                    ImageView img = new ImageView(this);
-                    // ضبط حجم الصورة ومكانها
-                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(500, 500);
-                    lp.gravity = Gravity.CENTER;
-                    img.setLayoutParams(lp);
-                    
-                    // كود بسيط لتحميل الصورة من الرابط (استخدام مكتبة أو AsyncTask)
-                    // ملاحظة: لتحميل الصور الحقيقية يفضل استخدام مكتبة Glide، 
-                    // لكن للتجربة الآن سنكتفي بإضافة العنصر
-                    img.setImageResource(android.R.drawable.ic_menu_gallery); 
-                    mainContainer.addView(img);
-                }
+{
+  "bg": "#0f0f1b",
+  "elements": [
+    {
+      "type": "img",
+      "val": "https://cdn-icons-png.flaticon.com/512/2584/2584687.png"
+    },
+    {
+      "type": "text",
+      "val": "تم تحديث التطبيق من الموقع!"
+    },
+    {
+      "type": "btn",
+      "val": "إغلاق الإعلان"
+    }
+  ]
+}
