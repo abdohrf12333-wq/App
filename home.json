@@ -1,21 +1,11 @@
 {
-  "system": {
-    "bg": "#0f0f0f"
-  },
+  "nav": [
+    {"title": "الرئيسية", "target": "home.json"},
+    {"title": "بحث", "target": "search.json"},
+    {"title": "المكتبة", "target": "library.json"}
+  ],
   "ui": [
-    {
-      "type": "img",
-      "val": "menu_icon",
-      "action": "open_menu"
-    },
-    {
-      "type": "text",
-      "val": "✨ لوحة تحكم نانو الذكية ✨",
-      "size": 24
-    },
-    {
-      "type": "text",
-      "val": "اختر من القائمة بالأسفل للوصول للخدمات"
-    }
+    {"type": "track", "title": "أغنية جديدة 1", "artist": "فنان 1"},
+    {"type": "track", "title": "أغنية جديدة 2", "artist": "فنان 2"}
   ]
 }
