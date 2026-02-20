@@ -1,17 +1,1 @@
-{
-  "bg": "#0f0f1b",
-  "elements": [
-    {
-      "type": "img",
-      "val": "https://cdn-icons-png.flaticon.com/512/2584/2584687.png"
-    },
-    {
-      "type": "text",
-      "val": "تم تحديث التطبيق من الموقع!"
-    },
-    {
-      "type": "btn",
-      "val": "إغلاق الإعلان"
-    }
-  ]
-}
+
