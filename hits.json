@@ -1,0 +1,20 @@
+{
+  "ui": [
+    { "type": "text", "val": "🔥 الأغاني الأكثر استماعاً", "size": 22 },
+    { 
+      "type": "btn", 
+      "val": "▶️ الأغنية الأولى - فنان 1", 
+      "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" 
+    },
+    { 
+      "type": "btn", 
+      "val": "▶️ الأغنية الثانية - فنان 2", 
+      "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" 
+    },
+    { 
+      "type": "btn", 
+      "val": "⬅️ العودة للرئيسية", 
+      "target": "home.json" 
+    }
+  ]
+}
