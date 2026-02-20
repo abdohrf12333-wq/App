@@ -1,0 +1,21 @@
+{
+  "system": {
+    "bg": "#0f0f0f"
+  },
+  "ui": [
+    {
+      "type": "img",
+      "val": "menu_icon",
+      "action": "open_menu"
+    },
+    {
+      "type": "text",
+      "val": "✨ لوحة تحكم نانو الذكية ✨",
+      "size": 24
+    },
+    {
+      "type": "text",
+      "val": "اختر من القائمة بالأسفل للوصول للخدمات"
+    }
+  ]
+}
