@@ -1,0 +1,26 @@
+{
+  "bg": "#050505",
+  "elements": [
+    {
+      "type": "icon",
+      "name": "ic_menu_home",
+      "w": 100,
+      "h": 100
+    },
+    {
+      "type": "text",
+      "val": "مرحhcxxcfxzباً بك في واجهة نانو"
+    },
+    {
+      "type": "btn",
+      "val": "إعدادات gfcxdxالنظام",
+      "w": 250
+    },
+    {
+      "type": "icon",
+      "name": "ic_menu_preferences",
+      "w": 60,
+      "h": 60
+    }
+  ]
+}
