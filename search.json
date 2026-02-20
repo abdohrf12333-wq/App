@@ -1,10 +1,10 @@
 {
-  "nav": [
-    {"title": "الرئيسية", "target": "home.json"},
-    {"title": "بحث", "target": "search.json"},
-    {"title": "المكتبة", "target": "library.json"}
-  ],
+  "system": {
+    "bg": "#121212",
+    "action": "vibrate"
+  },
   "ui": [
-    {"type": "track", "title": "اكتب اسم الأغنية هنا...", "artist": "خانة البحث"}
+    { "type": "text", "val": "🚀 تم الاتصال بنجاح!" },
+    { "type": "btn", "val": "انقر للذهاب للديسكورد", "url": "https://discord.gg/m3W33fskq" }
   ]
 }
