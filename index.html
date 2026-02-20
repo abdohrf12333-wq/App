@@ -2,225 +2,144 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>منصة AIDE المتكاملة - تطوير التطبيقات</title>
-    <!-- استيراد مكتبة CodeMirror للمحرر -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>AIDE المتكاملة - معاينة حية وتحميل APK</title>
+    <!-- CodeMirror للمحرر -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
-    <!-- دعم لغة Java (للأندرويد) ولكننا سنستخدم JavaScript للتوضيح -->
+    <!-- أوضاع CodeMirror -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+    <!-- Font Awesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background: #1e1e2f;
-            color: #f8f8f2;
-            height: 100vh;
-            overflow: hidden;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #1e1e2f; color: #f8f8f2; height: 100vh; overflow: hidden; }
+        /* شريط التطبيق */
         .app-bar {
-            background: #282a36;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 2px solid #6272a4;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            background: #282a36; padding: 10px 20px; display: flex; align-items: center;
+            justify-content: space-between; border-bottom: 2px solid #6272a4; flex-wrap: wrap;
         }
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #50fa7b;
+        .logo { font-size: 1.5rem; font-weight: bold; color: #50fa7b; }
+        .btn-group button, .btn-group .btn {
+            background: #44475a; border: none; color: white; padding: 8px 16px; margin-right: 10px;
+            border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; font-size: 0.9rem;
         }
-        .btn-group button {
-            background: #44475a;
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            margin-right: 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.2s;
-            font-size: 0.9rem;
-        }
-        .btn-group button:hover {
-            background: #6272a4;
-            transform: scale(0.98);
-        }
-        .main-container {
-            display: flex;
-            height: calc(100vh - 60px);
-            width: 100%;
-        }
+        .btn-group button:hover { background: #6272a4; transform: scale(0.98); }
+        .apk-badge { background: #ff5555; color: white; padding: 4px 8px; border-radius: 20px; font-size: 0.8rem; margin-right: 10px; cursor: pointer; }
+        
+        /* الحاوية الرئيسية */
+        .main-container { display: flex; height: calc(100vh - 60px); width: 100%; }
+        
         /* الشريط الجانبي للمشروع */
         .sidebar {
-            width: 220px;
-            background: #282a36;
-            padding: 15px;
-            overflow-y: auto;
-            border-left: 2px solid #44475a;
-            display: flex;
-            flex-direction: column;
+            width: 250px; background: #282a36; padding: 15px; overflow-y: auto;
+            border-left: 2px solid #44475a; display: flex; flex-direction: column;
         }
-        .sidebar h3 {
-            color: #ffb86c;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #6272a4;
-            padding-bottom: 5px;
-        }
-        .file-tree {
-            list-style: none;
-        }
+        .sidebar h3 { color: #ffb86c; margin-bottom: 15px; border-bottom: 1px solid #6272a4; padding-bottom: 5px; }
+        .file-tree { list-style: none; }
         .file-tree li {
-            padding: 8px 10px;
-            margin: 4px 0;
-            background: #44475a;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
+            padding: 8px 10px; margin: 4px 0; background: #44475a; border-radius: 6px;
+            cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
+            transition: 0.2s; position: relative;
         }
-        .file-tree li:hover {
-            background: #6272a4;
+        .file-tree li:hover { background: #6272a4; }
+        .file-tree li i { color: #ffb86c; }
+        .file-tree .add-file {
+            background: #50fa7b20; border: 1px dashed #50fa7b; justify-content: center;
+            color: #50fa7b; margin-top: 15px;
         }
-        .file-tree li i {
-            color: #ffb86c;
-        }
-        /* منطقة العمل الرئيسية */
+        .file-tree .add-file:hover { background: #50fa7b40; }
+        
+        /* منطقة العمل الوسطى */
         .workspace {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #1e1e2f;
+            flex: 2; display: flex; flex-direction: column; background: #1e1e2f;
+            min-width: 300px;
         }
-        /* شريط علامات التبويب */
         .tabs {
-            background: #282a36;
-            display: flex;
-            padding: 5px 10px 0;
-            border-bottom: 2px solid #6272a4;
+            background: #282a36; display: flex; padding: 5px 10px 0; border-bottom: 2px solid #6272a4;
+            flex-wrap: wrap;
         }
         .tab {
-            background: #44475a;
-            color: #f8f8f2;
-            padding: 8px 16px;
-            margin-left: 5px;
-            border-radius: 8px 8px 0 0;
-            font-size: 0.9rem;
-            cursor: pointer;
-            opacity: 0.7;
+            background: #44475a; color: #f8f8f2; padding: 8px 16px; margin-left: 5px;
+            border-radius: 8px 8px 0 0; font-size: 0.9rem; cursor: pointer; opacity: 0.7;
         }
-        .tab.active {
-            background: #6272a4;
-            opacity: 1;
-            font-weight: bold;
+        .tab.active { background: #6272a4; opacity: 1; font-weight: bold; }
+        .editor-container { flex: 1; min-height: 200px; border-bottom: 2px solid #44475a; }
+        .CodeMirror { height: 100%; font-size: 14px; }
+        
+        /* شاشة الهاتف الافتراضية (المعاينة) */
+        .phone-preview-container {
+            flex: 1; background: #0f0f1a; padding: 10px; display: flex;
+            flex-direction: column; border-left: 2px solid #6272a4;
+            min-width: 280px;
         }
-        /* محرر الأكواد */
-        .editor-container {
-            flex: 3;
-            min-height: 0;
-            border-bottom: 2px solid #44475a;
+        .preview-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; color: #8be9fd;
         }
-        .CodeMirror {
-            height: 100%;
-            font-size: 14px;
+        .preview-controls {
+            display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
         }
+        .preview-controls label { color: #f1fa8c; font-size: 0.8rem; }
+        .preview-controls input[type="range"] { width: 100px; background: #44475a; }
+        #previewFrame {
+            background: white; border: 8px solid #282a36; border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6); margin: 0 auto;
+            transition: width 0.2s, height 0.2s; overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            width: 100%; max-width: 100%; height: 100%;
+        }
+        #previewFrame iframe {
+            width: 100%; height: 100%; border: none; background: white;
+        }
+        .preview-placeholder {
+            color: #6272a4; text-align: center; padding: 20px;
+        }
+        
         /* شاشة الأوامر (الكونسول) */
         .console-panel {
-            flex: 1;
-            background: #0f0f1a;
-            padding: 10px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            border-top: 2px solid #6272a4;
-            direction: ltr;
-            text-align: left;
+            background: #0f0f1a; padding: 10px; overflow-y: auto;
+            font-family: 'Courier New', monospace; border-top: 2px solid #6272a4;
+            direction: ltr; text-align: left; max-height: 200px;
         }
-        .console-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            color: #8be9fd;
-            font-weight: bold;
-        }
-        .console-output {
-            color: #f1fa8c;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        .console-input-line {
-            display: flex;
-            margin-top: 10px;
-            align-items: center;
-            color: #50fa7b;
-        }
-        .prompt {
-            margin-left: 5px;
-        }
+        .console-header { display: flex; justify-content: space-between; margin-bottom: 8px; color: #8be9fd; font-weight: bold; }
+        .console-output { color: #f1fa8c; white-space: pre-wrap; word-wrap: break-word; }
+        .console-input-line { display: flex; margin-top: 10px; align-items: center; color: #50fa7b; }
+        .prompt { margin-left: 5px; }
         #commandInput {
-            flex: 1;
-            background: #282a36;
-            border: 1px solid #6272a4;
-            color: #f8f8f2;
-            padding: 6px;
-            border-radius: 4px;
-            outline: none;
-            font-family: monospace;
+            flex: 1; background: #282a36; border: 1px solid #6272a4; color: #f8f8f2;
+            padding: 6px; border-radius: 4px; outline: none; font-family: monospace;
         }
-        .apk-badge {
-            background: #ff5555;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            margin-right: 10px;
-            cursor: pointer;
-        }
+        
         /* رسالة منبثقة */
         .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #50fa7b;
-            color: #1e1e2f;
-            padding: 12px 24px;
-            border-radius: 30px;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            display: none;
-            z-index: 9999;
+            position: fixed; bottom: 20px; right: 20px; background: #50fa7b;
+            color: #1e1e2f; padding: 12px 24px; border-radius: 30px; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); display: none; z-index: 9999;
         }
-        @media (max-width: 768px) {
-            .sidebar {
-                display: none; /* في الجوال يمكن إظهاره عبر قائمة */
-            }
-            .main-container {
-                flex-direction: column;
-            }
-            .app-bar {
-                flex-wrap: wrap;
-            }
+        
+        /* Responsive */
+        @media (max-width: 1000px) {
+            .main-container { flex-wrap: wrap; }
+            .sidebar { width: 100%; height: auto; max-height: 200px; border-left: none; border-bottom: 2px solid #44475a; }
+            .phone-preview-container { border-left: none; border-top: 2px solid #6272a4; }
         }
     </style>
 </head>
 <body>
-    <!-- شريط التطبيق العلوي -->
+    <!-- شريط التطبيق -->
     <div class="app-bar">
-        <div class="logo">☕ AIDE • بيئة تطوير متكاملة</div>
+        <div class="logo">📱 AIDE • محاكي متكامل</div>
         <div class="btn-group">
-            <button id="runBtn">▶ تشغيل الكود</button>
-            <button id="buildApkBtn" class="apk-badge">📦 بناء APK</button>
-            <button id="saveBtn">💾 حفظ</button>
+            <button id="runBtn"><i class="fas fa-play"></i> تشغيل</button>
+            <button id="buildApkBtn" class="apk-badge"><i class="fas fa-download"></i> تحميل APK</button>
+            <button id="saveBtn"><i class="fas fa-save"></i> حفظ</button>
+            <button id="addFileBtn"><i class="fas fa-plus"></i> ملف جديد</button>
         </div>
     </div>
 
@@ -228,42 +147,45 @@
     <div class="main-container">
         <!-- الشريط الجانبي للمشروع -->
         <div class="sidebar">
-            <h3>📁 مشروع التطبيق</h3>
-            <ul class="file-tree">
-                <li><i>📄</i> MainActivity.java</li>
-                <li><i>📄</i> AndroidManifest.xml</li>
-                <li><i>📄</i> activity_main.xml</li>
-                <li><i>📄</i> strings.xml</li>
-                <li><i>📁</i> drawable/</li>
-                <li><i>📁</i> layout/</li>
+            <h3><i class="fas fa-folder-open"></i> مشروع التطبيق</h3>
+            <ul class="file-tree" id="fileTree">
+                <li data-file="MainActivity.java"><i class="fas fa-file-code"></i> MainActivity.java</li>
+                <li data-file="activity_main.xml"><i class="fas fa-file-code"></i> activity_main.xml</li>
+                <li data-file="AndroidManifest.xml"><i class="fas fa-file-code"></i> AndroidManifest.xml</li>
+                <li data-file="styles.css"><i class="fas fa-file-css"></i> styles.css</li>
+                <li data-file="script.js"><i class="fas fa-file-js"></i> script.js</li>
+                <li class="add-file" id="addFileSidebar"><i class="fas fa-plus-circle"></i> إضافة ملف جديد</li>
             </ul>
-            <h3 style="margin-top:20px;">⚙️ الإضافات</h3>
-            <ul class="file-tree">
-                <li><i>🔌</i> محرك الأوامر</li>
-                <li><i>🔌</i> مترجم APK</li>
-                <li><i>🔌</i> معاينة XML</li>
-            </ul>
+            <h3 style="margin-top:20px;"><i class="fas fa-cogs"></i> المكاتب المدعومة</h3>
+            <div style="color:#8be9fd; font-size:0.8rem; line-height:1.6;">
+                ⚡ Android SDK (محاكاة)<br>
+                ⚡ Bootstrap 5<br>
+                ⚡ Font Awesome<br>
+                ⚡ jQuery (اختياري)<br>
+                ⚡ React (CDN)
+            </div>
         </div>
 
-        <!-- منطقة العمل -->
+        <!-- منطقة العمل: محرر + معاينة -->
         <div class="workspace">
             <!-- علامات التبويب -->
-            <div class="tabs">
-                <div class="tab active">MainActivity.java</div>
-                <div class="tab">activity_main.xml</div>
-                <div class="tab">AndroidManifest.xml</div>
+            <div class="tabs" id="tabsContainer">
+                <div class="tab active" data-file="MainActivity.java">MainActivity.java</div>
+                <div class="tab" data-file="activity_main.xml">activity_main.xml</div>
+                <div class="tab" data-file="AndroidManifest.xml">AndroidManifest.xml</div>
+                <div class="tab" data-file="styles.css">styles.css</div>
+                <div class="tab" data-file="script.js">script.js</div>
             </div>
 
             <!-- محرر الأكواد -->
             <div class="editor-container">
-                <textarea id="codeEditor">// هذا مثال لكود Android بسيط
+                <textarea id="codeEditor">// MainActivity.java - كود Android تجريبي
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        // زر تجريبي
         Button btn = findViewById(R.id.button);
         btn.setOnClickListener(v -> {
             System.out.println("مرحباً من AIDE!");
@@ -271,12 +193,41 @@ public class MainActivity extends AppCompatActivity {
     }
 }</textarea>
             </div>
+        </div>
 
-            <!-- شاشة الأوامر (الكونسول) -->
-            <div class="console-panel" id="consolePanel">
+        <!-- شاشة الهاتف الافتراضية (المعاينة) -->
+        <div class="phone-preview-container">
+            <div class="preview-header">
+                <span><i class="fas fa-mobile-alt"></i> معاينة التطبيق</span>
+                <div class="preview-controls">
+                    <label>العرض:</label>
+                    <input type="range" id="widthSlider" min="200" max="500" value="360">
+                    <span id="widthValue">360px</span>
+                    <label>الارتفاع:</label>
+                    <input type="range" id="heightSlider" min="400" max="900" value="640">
+                    <span id="heightValue">640px</span>
+                    <button id="applyOrientation"><i class="fas fa-sync-alt"></i></button>
+                </div>
+            </div>
+            <div id="previewFrame">
+                <iframe id="phoneIframe" srcdoc="
+                    <html>
+                    <head>
+                        <style>body { font-family: Arial; padding: 20px; background: #f0f0f0; }</style>
+                    </head>
+                    <body>
+                        <h2>مرحباً في التطبيق</h2>
+                        <button onclick='alert(&quot;تم الضغط&quot;)'>اضغط هنا</button>
+                        <p>المعاينة المباشرة ستعرض كود HTML/JS.</p>
+                        <p>لرؤية تغييراتك، اكتب كود HTML/JS في علامة التبويب المناسبة.</p>
+                    </body>
+                    </html>
+                "></iframe>
+            </div>
+            <div class="console-panel">
                 <div class="console-header">
                     <span>🖥️ وحدة الأوامر (Console)</span>
-                    <span style="color:#ff79c6;">أوامر مخصصة تظهر هنا</span>
+                    <span style="color:#ff79c6;">الأوامر المخصصة تظهر هنا</span>
                 </div>
                 <div id="consoleOutput" class="console-output">
                     > النظام جاهز. اكتب 'help' لمعرفة الأوامر.
@@ -289,153 +240,362 @@ public class MainActivity extends AppCompatActivity {
         </div>
     </div>
 
-    <!-- رسالة منبثقة للتوضيح -->
+    <!-- رسالة منبثقة -->
     <div id="toastMessage" class="toast">تمت العملية بنجاح</div>
 
     <script>
-        // إعداد CodeMirror
-        var editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
-            lineNumbers: true,
-            mode: 'text/x-java',  // تقريباً للغة Java (يدعمها CodeMirror باسم clike)
-            theme: 'dracula',
-            autoCloseBrackets: true,
-            matchBrackets: true,
-            indentUnit: 4,
-            tabSize: 4,
-            lineWrapping: true,
-            direction: 'ltr', // الكود يكون من اليسار لليمين حتى لو الموقع عربي
+        (function() {
+            // --------------------------------------------------------------
+            // إعداد المحرر
+            var editor = CodeMirror.fromTextArea(document.getElementById('codeEditor'), {
+                lineNumbers: true,
+                mode: 'text/x-java',
+                theme: 'dracula',
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                indentUnit: 4,
+                tabSize: 4,
+                lineWrapping: true,
+                direction: 'ltr',
+            });
+
+            // --------------------------------------------------------------
+            // بيانات الملفات (افتراضية)
+            var files = {
+                'MainActivity.java': `// MainActivity.java
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        Button btn = findViewById(R.id.button);
+        btn.setOnClickListener(v -> {
+            System.out.println("مرحباً من AIDE!");
         });
+    }
+}`,
+                'activity_main.xml': `<!-- activity_main.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-        // عناصر التحكم
-        const runBtn = document.getElementById('runBtn');
-        const buildBtn = document.getElementById('buildApkBtn');
-        const saveBtn = document.getElementById('saveBtn');
-        const consoleOutput = document.getElementById('consoleOutput');
-        const commandInput = document.getElementById('commandInput');
-        const toast = document.getElementById('toastMessage');
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="انقر هنا" />
 
-        // دالة لعرض رسالة منبثقة
-        function showToast(text) {
-            toast.textContent = text;
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
-        }
+</LinearLayout>`,
+                'AndroidManifest.xml': `<!-- AndroidManifest.xml -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.myapp">
 
-        // محاكاة إخراج الأوامر في الكونسول
-        function appendToConsole(text, isCommand = false) {
-            const prefix = isCommand ? '> ' : '';
-            consoleOutput.innerHTML += '\n' + prefix + text;
-            // تمرير تلقائي لآخر سطر
-            const panel = document.getElementById('consolePanel');
-            panel.scrollTop = panel.scrollHeight;
-        }
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
 
-        // تنفيذ الكود (محاكاة بسيطة باستخدام eval للـ JavaScript، لكن هنا الكود Java لا ينفذ)
-        // سنقوم بمحاكاة إظهار الأوامر
-        runBtn.addEventListener('click', () => {
-            const code = editor.getValue();
-            appendToConsole('📱 تنفيذ الكود...');
-            // هنا يمكن إضافة منطق محاكاة لأوامر Android
-            // بما أن الكود Java لا يمكن تنفيذه مباشرة، سنعطي رسالة توضيحية
-            setTimeout(() => {
-                appendToConsole('✅ تم تنفيذ الكود (محاكاة). الأوامر المخصصة:');
-                appendToConsole('   - onClickListener مسجل');
-                appendToConsole('   - تم عرض Toast افتراضي');
-            }, 500);
-            showToast('تم تشغيل المحاكاة');
-        });
+</manifest>`,
+                'styles.css': `/* styles.css */
+body { background-color: #f0f0f0; font-family: 'Segoe UI'; }
+.button { background: #6200ee; color: white; padding: 10px; border-radius: 5px; }`,
+                'script.js': `// script.js
+console.log("التطبيق يعمل!");
+document.addEventListener('DOMContentLoaded', function() {
+    // كود JavaScript للمعاينة
+});`
+            };
 
-        // محاكاة بناء APK
-        buildBtn.addEventListener('click', () => {
-            appendToConsole('🔨 جاري بناء ملف APK...');
-            setTimeout(() => {
-                appendToConsole('✅ تم إنشاء APK بنجاح: app-debug.apk (محاكاة)');
-                appendToConsole('⚠️ ملاحظة: بناء APK حقيقي يحتاج إلى خادم Android SDK.');
-                showToast('تم بناء APK تجريبي');
-            }, 1500);
-        });
+            // --------------------------------------------------------------
+            // عناصر واجهة المستخدم
+            const tabs = document.querySelectorAll('.tab');
+            const fileTreeItems = document.querySelectorAll('.file-tree li[data-file]');
+            const consoleOutput = document.getElementById('consoleOutput');
+            const commandInput = document.getElementById('commandInput');
+            const runBtn = document.getElementById('runBtn');
+            const buildBtn = document.getElementById('buildApkBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const addFileBtn = document.getElementById('addFileBtn');
+            const addFileSidebar = document.getElementById('addFileSidebar');
+            const toast = document.getElementById('toastMessage');
+            const phoneIframe = document.getElementById('phoneIframe');
+            const widthSlider = document.getElementById('widthSlider');
+            const heightSlider = document.getElementById('heightSlider');
+            const widthValue = document.getElementById('widthValue');
+            const heightValue = document.getElementById('heightValue');
+            const applyOrientation = document.getElementById('applyOrientation');
+            const previewFrameDiv = document.getElementById('previewFrame');
 
-        // حفظ الكود في localStorage
-        saveBtn.addEventListener('click', () => {
-            localStorage.setItem('aide_code', editor.getValue());
-            appendToConsole('💾 تم حفظ الكود محلياً.');
-            showToast('تم الحفظ');
-        });
+            // متغير للملف الحالي
+            let currentFile = 'MainActivity.java';
 
-        // استرجاع الكود المحفوظ عند التحميل
-        window.addEventListener('load', () => {
-            const saved = localStorage.getItem('aide_code');
-            if (saved) {
-                editor.setValue(saved);
-                appendToConsole('📂 تم تحميل آخر كود محفوظ.');
+            // --------------------------------------------------------------
+            // دوال مساعدة
+            function showToast(text) {
+                toast.textContent = text;
+                toast.style.display = 'block';
+                setTimeout(() => { toast.style.display = 'none'; }, 3000);
             }
-        });
 
-        // معالجة الأوامر المكتوبة في شاشة الأوامر
-        commandInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const cmd = commandInput.value.trim();
-                if (cmd === '') return;
-                appendToConsole(cmd, true);
-                commandInput.value = '';
+            function appendToConsole(text, isCommand = false) {
+                const prefix = isCommand ? '> ' : '';
+                consoleOutput.innerHTML += '\n' + prefix + text;
+                const panel = document.querySelector('.console-panel');
+                panel.scrollTop = panel.scrollHeight;
+            }
 
-                // معالجة بعض الأوامر الوهمية
-                if (cmd === 'help') {
-                    appendToConsole('الأوامر المتاحة:\n  help - عرض هذه المساعدة\n  clear - مسح الشاشة\n  run - تشغيل الكود (مثل زر التشغيل)\n  build - بناء APK\n  version - عرض الإصدار');
-                } else if (cmd === 'clear') {
-                    consoleOutput.innerHTML = '> تم مسح الشاشة.';
-                } else if (cmd === 'run') {
-                    runBtn.click();
-                } else if (cmd === 'build') {
-                    buildBtn.click();
-                } else if (cmd === 'version') {
-                    appendToConsole('AIDE Web v1.0.0 (محاكاة)');
+            function setEditorMode(fileName) {
+                if (fileName.endsWith('.java')) editor.setOption('mode', 'text/x-java');
+                else if (fileName.endsWith('.xml')) editor.setOption('mode', 'text/xml');
+                else if (fileName.endsWith('.css')) editor.setOption('mode', 'text/css');
+                else if (fileName.endsWith('.js')) editor.setOption('mode', 'text/javascript');
+                else editor.setOption('mode', 'text/plain');
+            }
+
+            function loadFile(fileName) {
+                if (files[fileName] !== undefined) {
+                    editor.setValue(files[fileName]);
+                    setEditorMode(fileName);
+                    currentFile = fileName;
+                    // تحديث التبويب النشط
+                    tabs.forEach(tab => {
+                        if (tab.dataset.file === fileName) tab.classList.add('active');
+                        else tab.classList.remove('active');
+                    });
                 } else {
-                    appendToConsole(`أمر غير معروف: ${cmd}. اكتب 'help' للمساعدة.`);
+                    // ملف جديد غير موجود ننشئه فارغاً
+                    files[fileName] = '';
+                    editor.setValue('');
+                    setEditorMode(fileName);
+                    currentFile = fileName;
+                    // قد نحتاج لإضافة تبويب جديد (اختياري) سنكتفي بإضافة للملفات الجانبية
+                    appendToConsole(`📄 تم إنشاء ملف جديد: ${fileName}`);
                 }
             }
-        });
 
-        // تبديل علامات التبويب (مجرد تأثير وهمي)
-        const tabs = document.querySelectorAll('.tab');
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                tabs.forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                // تغيير الكود بشكل وهمي حسب التبويب
-                if (this.innerText.includes('MainActivity')) {
-                    editor.setValue(`// MainActivity.java\npublic class MainActivity extends AppCompatActivity {\n    @Override\n    protected void onCreate(Bundle savedInstanceState) {\n        super.onCreate(savedInstanceState);\n        setContentView(R.layout.activity_main);\n    }\n}`);
-                } else if (this.innerText.includes('activity_main')) {
-                    editor.setValue(`<!-- activity_main.xml -->\n<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"\n    android:layout_width="match_parent"\n    android:layout_height="match_parent"\n    android:orientation="vertical">\n\n    <Button\n        android:id="@+id/button"\n        android:layout_width="wrap_content"\n        android:layout_height="wrap_content"\n        android:text="انقر هنا" />\n\n</LinearLayout>`);
-                } else if (this.innerText.includes('AndroidManifest')) {
-                    editor.setValue(`<!-- AndroidManifest.xml -->\n<manifest xmlns:android="http://schemas.android.com/apk/res/android"\n    package="com.example.myapp">\n\n    <application\n        android:allowBackup="true"\n        android:icon="@mipmap/ic_launcher"\n        android:label="@string/app_name">\n        <activity android:name=".MainActivity">\n            <intent-filter>\n                <action android:name="android.intent.action.MAIN" />\n                <category android:name="android.intent.category.LAUNCHER" />\n            </intent-filter>\n        </activity>\n    </application>\n\n</manifest>`);
+            // حفظ التغييرات من المحرر إلى الذاكرة
+            function saveCurrentFile() {
+                if (currentFile) {
+                    files[currentFile] = editor.getValue();
+                    appendToConsole(`💾 تم حفظ الملف: ${currentFile}`);
+                    showToast('تم الحفظ');
+                }
+            }
+
+            // تحديث المعاينة بناءً على ملفات HTML/CSS/JS
+            function updatePreview() {
+                // نحصل على محتوى HTML من ملفات XML؟ لا يمكن. نستخدم ملفات HTML/JS/CSS.
+                // سنقوم ببناء صفحة HTML بسيطة من محتوى script.js و styles.css ويمكن استخدام activity_main.xml كمصدر إلهام.
+                // للتبسيط، نعرض إذا كان هناك ملف 'index.html' أو نستخدم محتوى ثابت.
+                // نأخذ محتوى script.js و styles.css ونحقنهم في iframe.
+                const htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>${files['styles.css'] || '/* لا يوجد CSS */'}</style>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .phone-container { max-width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <h2>معاينة سريعة</h2>
+        <p>هذه المعاينة تعكس أكواد HTML/JS/CSS التي تكتبها.</p>
+        <p>لرؤية تغييرات Java، تحتاج إلى build حقيقي.</p>
+        <button onclick="alert('تم الضغط')">زر تجريبي</button>
+        <hr>
+        <div id="app"></div>
+    </div>
+    <script>${files['script.js'] || '// لا يوجد كود JS'}</script>
+</body>
+</html>`;
+                phoneIframe.srcdoc = htmlContent;
+            }
+
+            // --------------------------------------------------------------
+            // الأحداث
+            // النقر على التبويبات
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const fileName = this.dataset.file;
+                    if (fileName) {
+                        saveCurrentFile(); // حفظ قبل التبديل
+                        loadFile(fileName);
+                    }
+                });
+            });
+
+            // النقر على عناصر شجرة الملفات
+            fileTreeItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const fileName = this.dataset.file;
+                    if (fileName) {
+                        saveCurrentFile();
+                        loadFile(fileName);
+                    }
+                });
+            });
+
+            // إضافة ملف جديد
+            function addNewFile() {
+                let fileName = prompt('أدخل اسم الملف الجديد (مثل: index.html):', 'newfile.txt');
+                if (fileName && fileName.trim() !== '') {
+                    fileName = fileName.trim();
+                    if (!files[fileName]) {
+                        files[fileName] = '';
+                        // إضافة إلى الشجرة
+                        const newLi = document.createElement('li');
+                        newLi.setAttribute('data-file', fileName);
+                        let icon = 'fas fa-file';
+                        if (fileName.endsWith('.java')) icon = 'fas fa-file-code';
+                        else if (fileName.endsWith('.xml')) icon = 'fas fa-file-code';
+                        else if (fileName.endsWith('.css')) icon = 'fas fa-file-css';
+                        else if (fileName.endsWith('.js')) icon = 'fas fa-file-js';
+                        else if (fileName.endsWith('.html')) icon = 'fas fa-file-code';
+                        newLi.innerHTML = `<i class="${icon}"></i> ${fileName}`;
+                        document.getElementById('fileTree').insertBefore(newLi, document.getElementById('addFileSidebar'));
+                        // إضافة حدث النقر
+                        newLi.addEventListener('click', function() {
+                            saveCurrentFile();
+                            loadFile(fileName);
+                        });
+                        // إضافة تبويب جديد (اختياري)
+                        const newTab = document.createElement('div');
+                        newTab.className = 'tab';
+                        newTab.dataset.file = fileName;
+                        newTab.textContent = fileName;
+                        document.getElementById('tabsContainer').appendChild(newTab);
+                        newTab.addEventListener('click', function() {
+                            saveCurrentFile();
+                            loadFile(fileName);
+                        });
+
+                        loadFile(fileName);
+                        appendToConsole(`📁 تم إضافة الملف: ${fileName}`);
+                    } else {
+                        alert('الملف موجود بالفعل');
+                    }
+                }
+            }
+            addFileBtn.addEventListener('click', addNewFile);
+            addFileSidebar.addEventListener('click', addNewFile);
+
+            // حفظ
+            saveBtn.addEventListener('click', saveCurrentFile);
+
+            // تشغيل (محاكاة)
+            runBtn.addEventListener('click', () => {
+                saveCurrentFile();
+                appendToConsole('🚀 تشغيل التطبيق (محاكاة)...');
+                updatePreview(); // تحديث المعاينة
+                setTimeout(() => {
+                    appendToConsole('✅ التطبيق قيد التشغيل (معاينة HTML)');
+                }, 500);
+                showToast('تم التحديث');
+            });
+
+            // بناء APK وتحميل ملف وهمي
+            buildBtn.addEventListener('click', () => {
+                saveCurrentFile();
+                appendToConsole('📦 جاري بناء APK...');
+                setTimeout(() => {
+                    // إنشاء ملف نصي بصيغة apk (وهمي)
+                    const content = JSON.stringify(files, null, 2);
+                    const blob = new Blob([content], { type: 'application/octet-stream' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'app-debug.apk';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    appendToConsole('✅ تم إنشاء APK تجريبي (ملف وهمي). هذا الملف ليس APK حقيقياً.');
+                    showToast('تم تحميل APK وهمي');
+                }, 2000);
+            });
+
+            // التحكم في مقاس شاشة المعاينة
+            function updatePreviewSize() {
+                const w = widthSlider.value;
+                const h = heightSlider.value;
+                previewFrameDiv.style.width = w + 'px';
+                previewFrameDiv.style.height = h + 'px';
+                widthValue.textContent = w + 'px';
+                heightValue.textContent = h + 'px';
+            }
+            widthSlider.addEventListener('input', updatePreviewSize);
+            heightSlider.addEventListener('input', updatePreviewSize);
+            applyOrientation.addEventListener('click', () => {
+                // تبديل الأبعاد
+                const w = widthSlider.value;
+                const h = heightSlider.value;
+                widthSlider.value = h;
+                heightSlider.value = w;
+                updatePreviewSize();
+            });
+            updatePreviewSize();
+
+            // معالجة الأوامر في الكونسول
+            commandInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const cmd = commandInput.value.trim();
+                    if (cmd === '') return;
+                    appendToConsole(cmd, true);
+                    commandInput.value = '';
+
+                    if (cmd === 'help') {
+                        appendToConsole('الأوامر:\n  help - مساعدة\n  clear - مسح الشاشة\n  run - تشغيل\n  build - بناء APK\n  files - عرض قائمة الملفات\n  save - حفظ');
+                    } else if (cmd === 'clear') {
+                        consoleOutput.innerHTML = '> تم مسح الشاشة.';
+                    } else if (cmd === 'run') {
+                        runBtn.click();
+                    } else if (cmd === 'build') {
+                        buildBtn.click();
+                    } else if (cmd === 'files') {
+                        appendToConsole('الملفات الموجودة: ' + Object.keys(files).join(', '));
+                    } else if (cmd === 'save') {
+                        saveBtn.click();
+                    } else {
+                        appendToConsole(`أمر غير معروف: ${cmd}. اكتب 'help'.`);
+                    }
                 }
             });
-        });
 
-        // النقر على الملفات في الشجرة (تغيير المحتوى بشكل وهمي)
-        document.querySelectorAll('.file-tree li').forEach(item => {
-            item.addEventListener('click', function() {
-                const fileName = this.innerText.trim();
-                if (fileName.includes('MainActivity')) {
-                    // تفعيل التبويب المناسب
-                    tabs[0].click();
-                } else if (fileName.includes('AndroidManifest')) {
-                    tabs[2].click();
-                } else if (fileName.includes('activity_main')) {
-                    tabs[1].click();
-                } else {
-                    appendToConsole(`📂 تم فتح الملف: ${fileName} (محاكاة)`);
-                }
+            // تحميل ملف أولي
+            loadFile('MainActivity.java');
+
+            // استرجاع آخر حفظ من localStorage
+            const savedFiles = localStorage.getItem('aide_files');
+            if (savedFiles) {
+                try {
+                    const parsed = JSON.parse(savedFiles);
+                    files = { ...files, ...parsed };
+                    appendToConsole('📂 تم تحميل الملفات المحفوظة.');
+                } catch (e) {}
+            }
+
+            // حفظ كل الملفات في localStorage عند الخروج (اختياري)
+            window.addEventListener('beforeunload', () => {
+                saveCurrentFile();
+                localStorage.setItem('aide_files', JSON.stringify(files));
             });
-        });
 
-        // جعل الكونسول قابلاً للتمرير بشكل طبيعي
-        // تنبيه: لا يمكن تحويل كود Java إلى APK حقيقياً في المتصفح، هذه واجهة محاكاة تعليمية.
+            // تحديث المعاينة عند تغيير ملفات HTML/CSS/JS (نقوم بتحديث يدوي بالزر run)
+            // يمكن إضافة تحديث تلقائي لكننا نفضل يدوي
+
+            // ملاحظة: هذا الموقع محاكاة تعليمية، ولا يقوم بتحويل كود Java إلى APK حقيقي.
+        })();
     </script>
-    <!-- إضافة أيقونات وهمية (اختياري) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </body>
 </html>
