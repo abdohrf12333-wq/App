@@ -1,49 +1,1 @@
-{
-  "bg": "#121212",
-  "animation": "fade_in",
-  "elements": [
-    {
-      "type": "img",
-      "val": "https://cdn-icons-png.flaticon.com/512/2584/2584687.png",
-      "size": "120"
-    },
-    {
-      "type": "text",
-      "val": "مرحباً بك في عالم Nano",
-      "size": "26",
-      "style": "bold",
-      "color": "#00FF00"
-    },
-    {
-      "type": "text",
-      "val": "هذا التطبيق يعمل كلياً عبر السكريبتات السحابية",
-      "size": "14",
-      "color": "#AAAAAA"
-    },
-    {
-      "type": "spacer",
-      "height": "40"
-    },
-    {
-      "type": "btn",
-      "val": "⭐ قسم الخدمات المميزة",
-      "action": "open_services"
-    },
-    {
-      "type": "btn",
-      "val": "💰 محفظة الأرباح",
-      "action": "open_wallet"
-    },
-    {
-      "type": "btn",
-      "val": "⚙️ الإعدادات",
-      "action": "open_settings"
-    },
-    {
-      "type": "text",
-      "val": "نسخة النظام: 2.0.1",
-      "size": "10",
-      "color": "#444444"
-    }
-  ]
-}
+
