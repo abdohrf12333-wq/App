@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nano Dashboard - مبرمج التطبيقات</title>
+    <style>
+        body { background: #1a1a1a; color: white; font-family: sans-serif; display: flex; }
+        #login { position: fixed; inset: 0; background: black; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .editor-side { width: 60%; padding: 20px; }
+        .preview-side { width: 40%; background: #333; display: flex; justify-content: center; align-items: center; }
+        .phone { width: 300px; height: 600px; background: black; border: 10px solid #444; border-radius: 30px; overflow-y: auto; padding: 10px; }
+        textarea { width: 100%; height: 300px; background: #222; color: #0f0; border: 1px solid #555; }
+        button { padding: 10px 20px; cursor: pointer; background: #1DB954; border: none; color: white; font-weight: bold; }
+        .app-btn { width: 100%; margin: 5px 0; padding: 10px; background: #444; color: white; border: 1px solid #666; }
+    </style>
+</head>
+<body>
+
+<div id="login">
+    <h2>أدخل كلمة السر للدخول للبرمجة</h2>
+    <input type="password" id="pass" placeholder="Password">
+    <button onclick="checkPass()">دخول</button>
+</div>
+
+<div class="editor-side">
+    <h1>لوحة التحكم في التطبيق</h1>
+    <textarea id="jsonCode">
+{
+  "body": [
+    { "type": "text", "val": "مرحباً بك في تطبيقي" },
+    { "type": "btn", "val": "زرار تجريبي" }
+  ]
+}
+    </textarea><br><br>
+    <button onclick="updatePreview()">تحديث المعاينة (Preview)</button>
+    <button onclick="saveToCloud()">حفظ ونشر للتطبيق (Publish)</button>
+    <hr>
+    <a href="Your_APK_Link.apk" style="color: yellow;">⬇️ تحميل نسخة الـ APK الحالية</a>
+</div>
+
+<div class="preview-side">
+    <div class="phone" id="phonePreview">
+        </div>
+</div>
+
+<script>
+    function checkPass() {
+        if(document.getElementById('pass').value === "1234") { // كلمة السر الخاصة بك
+            document.getElementById('login').style.display = "none";
+        }
+    }
+
+    function updatePreview() {
+        const code = JSON.parse(document.getElementById('jsonCode').value);
+        const phone = document.getElementById('phonePreview');
+        phone.innerHTML = "";
+        code.body.forEach(item => {
+            if(item.type === "text") {
+                let p = document.createElement('p'); p.innerText = item.val; phone.appendChild(p);
+            } else if(item.type === "btn") {
+                let b = document.createElement('button'); b.className = "app-btn"; b.innerText = item.val; phone.appendChild(b);
+            }
+        });
+    }
+
+    function saveToCloud() {
+        alert("تم الحفظ! التعديلات ستظهر في التطبيق فور فتحه.");
+        // هنا يتم ربط الموقع بـ GitHub API أو Server لحفظ الملف
+    }
+</script>
+</body>
+</html>
