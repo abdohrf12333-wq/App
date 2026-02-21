@@ -1,0 +1,30 @@
+{
+  "id": 1,
+  "name": "script1",
+  "language": "app",   // نوع السكريبت
+  "ui": [
+    {
+      "type": "text",
+      "text": "مرحبا في السكريبت 1",
+      "color": "#FF0000",
+      "size": 22
+    },
+    {
+      "type": "button",
+      "text": "اضغط هنا",
+      "position": {"x":100,"y":200},
+      "action": {
+        "type":"toast",
+        "message":"تم الضغط في سكريبت 1"
+      }
+    },
+    {
+      "type": "image",
+      "url":"https://picsum.photos/200"
+    },
+    {
+      "type": "sound",
+      "url":"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+    }
+  ]
+}
