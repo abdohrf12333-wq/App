@@ -1,13 +1,16 @@
 {
-  "ui": [
-    {
-      "type": "text",
-      "text": "اهلا بيك"
-    },
-    {
-      "type": "button",
-      "text": "اضغط هنا",
-      "action": "script1.txt"
-    }
-  ]
+ "ui":[
+  {"type":"text","text":"اهلا بيك","color":"#ff0000","size":22},
+
+  {"type":"button","text":"رسالة",
+   "action":{"type":"toast","message":"تم الضغط"}},
+
+  {"type":"button","text":"فتح نافذة",
+   "action":{"type":"dialog","title":"عنوان","message":"محتوى"}},
+
+  {"type":"image","url":"https://picsum.photos/200"},
+
+  {"type":"button","text":"تشغيل صوت",
+   "action":{"type":"sound","url":"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"}}
+ ]
 }
