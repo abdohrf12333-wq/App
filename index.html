@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile App Builder</title>
+
+<style>
+body{
+  font-family: Arial;
+  background:#1e1e1e;
+  color:white;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.phone{
+  width:360px;
+  height:640px;
+  background:#000;
+  border-radius:25px;
+  padding:15px;
+  overflow:hidden;
+  position:relative;
+}
+.page-title{
+  text-align:center;
+  margin-bottom:10px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+}
+.icon{
+  text-align:center;
+  cursor:pointer;
+}
+.icon img{
+  width:60px;
+  height:60px;
+}
+.controls{
+  margin-top:20px;
+}
+button{
+  padding:8px 12px;
+  margin:5px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+input{
+  padding:5px;
+  margin:3px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>📱 Mobile App Builder</h2>
+
+<div class="phone">
+  <div class="page-title" id="pageTitle">الصفحة الرئيسية</div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="controls">
+  <input type="text" id="iconName" placeholder="اسم الأيقونة">
+  <input type="text" id="iconCommand" placeholder="الأمر (مثال: toast:مرحبا)">
+  <button onclick="addIcon()">➕ إضافة أيقونة</button>
+  <button onclick="addPage()">📄 صفحة جديدة</button>
+  <button onclick="exportJSON()">📦 تصدير</button>
+</div>
+
+<script>
+
+let appData = {
+  pages: [
+    {
+      name: "الصفحة الرئيسية",
+      icons: []
+    }
+  ]
+};
+
+let currentPage = 0;
+
+function render(){
+  let grid = document.getElementById("grid");
+  let pageTitle = document.getElementById("pageTitle");
+  grid.innerHTML="";
+  pageTitle.innerText = appData.pages[currentPage].name;
+
+  appData.pages[currentPage].icons.forEach((icon,index)=>{
+    let div = document.createElement("div");
+    div.className="icon";
+    div.innerHTML=`
+      <img src="https://cdn-icons-png.flaticon.com/512/1828/1828919.png">
+      <div>${icon.name}</div>
+    `;
+    div.onclick=()=>editIcon(index);
+    grid.appendChild(div);
+  });
+
+  localStorage.setItem("appData",JSON.stringify(appData));
+}
+
+function addIcon(){
+  let name=document.getElementById("iconName").value;
+  let command=document.getElementById("iconCommand").value;
+
+  if(name==""||command==""){
+    alert("اكتب الاسم والأمر");
+    return;
+  }
+
+  appData.pages[currentPage].icons.push({
+    name:name,
+    command:command
+  });
+
+  document.getElementById("iconName").value="";
+  document.getElementById("iconCommand").value="";
+  render();
+}
+
+function editIcon(index){
+  let newName=prompt("تعديل الاسم:",appData.pages[currentPage].icons[index].name);
+  if(newName!=null){
+    appData.pages[currentPage].icons[index].name=newName;
+  }
+  render();
+}
+
+function addPage(){
+  let name=prompt("اسم الصفحة الجديدة:");
+  if(name){
+    appData.pages.push({
+      name:name,
+      icons:[]
+    });
+    currentPage=appData.pages.length-1;
+    render();
+  }
+}
+
+function exportJSON(){
+  let dataStr="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(appData,null,2));
+  let downloadAnchor=document.createElement("a");
+  downloadAnchor.setAttribute("href",dataStr);
+  downloadAnchor.setAttribute("download","app_design.json");
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
+}
+
+window.onload=function(){
+  let saved=localStorage.getItem("appData");
+  if(saved){
+    appData=JSON.parse(saved);
+  }
+  render();
+}
+
+</script>
+
+</body>
+</html>
