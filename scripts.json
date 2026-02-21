@@ -1,12 +1,13 @@
 {
-  "scripts": [
+  "ui": [
     {
-      "name": "رسالة ترحيب",
-      "url": "https://raw.githubusercontent.com/abdohrf12333-wq/App/main/script1.txt"
+      "type": "text",
+      "text": "اهلا بيك"
     },
     {
-      "name": "سكربت جديد",
-      "url": "https://raw.githubusercontent.com/abdohrf12333-wq/App/main/script2.txt"
+      "type": "button",
+      "text": "اضغط هنا",
+      "action": "script1.txt"
     }
   ]
 }
