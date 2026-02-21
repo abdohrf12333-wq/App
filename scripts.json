@@ -1,16 +1,6 @@
 {
- "ui":[
-  {"type":"text","text":"اهلا بيك","color":"#ff0000","size":22},
-
-  {"type":"button","text":"رسالة",
-   "action":{"type":"toast","message":"تم الضغط"}},
-
-  {"type":"button","text":"فتح نافذة",
-   "action":{"type":"dialog","title":"عنوان","message":"محتوى"}},
-
-  {"type":"image","url":"https://picsum.photos/200"},
-
-  {"type":"button","text":"تشغيل صوت",
-   "action":{"type":"sound","url":"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"}}
- ]
+  "scripts": [
+    {"id":1,"name":"script1","url":"https://raw.githubusercontent.com/abdohrf12333-wq/App/main/script1.json"},
+    {"id":2,"name":"script2","url":"https://raw.githubusercontent.com/abdohrf12333-wq/App/main/script2.json"}
+  ]
 }
