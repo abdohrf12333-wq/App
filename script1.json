@@ -1,11 +1,7 @@
 {
   "id": 1,
-  "action": "ui",
-  "type": "page_content",
-  "target_id": "page1",
+  "action": "show_page",
+  "page_name": "page1",
   "page_color": "#FF0000",
-  "content": [
-    {"type": "text", "value": "أهلاً بك في الصفحة الحمراء"},
-    {"type": "button", "label": "زر داخل الصفحة 1"}
-  ]
+  "text": "هذه هي الصفحة الحمراء"
 }
