@@ -1,6 +1,11 @@
 {
   "id": 3,
   "action": "ui",
-  "label": "🚀 تشغيل محرك الغش/التعديل",
-  "task": "start_engine"
+  "type": "page_content",
+  "target_id": "page3",
+  "page_color": "#FFFF00",
+  "content": [
+    {"type": "text", "value": "أهلاً بك في الصفحة الصفراء"},
+    {"type": "button", "label": "زر داخل الصفحة 3"}
+  ]
 }
