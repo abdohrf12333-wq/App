@@ -1,6 +1,11 @@
 {
   "id": 1,
   "action": "ui",
-  "label": "✅ تم الاتصال بـ GitHub بنجاح",
-  "color": "#00FF00"
+  "type": "page_content",
+  "target_id": "page1",
+  "page_color": "#FF0000",
+  "content": [
+    {"type": "text", "value": "أهلاً بك في الصفحة الحمراء"},
+    {"type": "button", "label": "زر داخل الصفحة 1"}
+  ]
 }
