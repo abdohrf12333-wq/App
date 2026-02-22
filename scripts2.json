@@ -1,0 +1,6 @@
+{
+  "id": 2,
+  "action": "exec",
+  "cmd": "logcat -d",
+  "description": "قراءة سجل النظام للتأكد من الصلاحيات"
+}
