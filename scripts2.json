@@ -1,6 +1,11 @@
 {
   "id": 2,
-  "action": "exec",
-  "cmd": "logcat -d",
-  "description": "قراءة سجل النظام للتأكد من الصلاحيات"
+  "action": "ui",
+  "type": "page_content",
+  "target_id": "page2",
+  "page_color": "#0000FF",
+  "content": [
+    {"type": "text", "value": "أهلاً بك في الصفحة الزرقاء"},
+    {"type": "button", "label": "زر داخل الصفحة 2"}
+  ]
 }
