@@ -1,0 +1,11 @@
+{
+  "id": 4,
+  "action": "ui",
+  "type": "header_layout",
+  "background": "#00FF00",
+  "buttons": [
+    {"label": "الصفحة 1", "target": "page1"},
+    {"label": "الصفحة 2", "target": "page2"},
+    {"label": "الصفحة 3", "target": "page3"}
+  ]
+}
