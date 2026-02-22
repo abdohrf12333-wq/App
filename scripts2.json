@@ -1,11 +1,7 @@
 {
   "id": 2,
-  "action": "ui",
-  "type": "page_content",
-  "target_id": "page2",
+  "action": "show_page",
+  "page_name": "page2",
   "page_color": "#0000FF",
-  "content": [
-    {"type": "text", "value": "أهلاً بك في الصفحة الزرقاء"},
-    {"type": "button", "label": "زر داخل الصفحة 2"}
-  ]
+  "text": "هذه هي الصفحة الزرقاء"
 }
