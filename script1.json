@@ -1,7 +1,8 @@
 {
   "id": 1,
-  "action": "show_page",
-  "page_name": "page1",
+  "action": "ui",
+  "type": "page_content",
+  "target_id": "page1",
   "page_color": "#FF0000",
-  "text": "هذه هي الصفحة الحمراء"
+  "text": "مرحباً بك في الصفحة الحمراء"
 }
