@@ -1,9 +1,0 @@
-{
-  "id": 4,
-  "action": "ui",
-  "type": "header_layout",
-  "bg_color": "#00FF00",
-  "btn1": "الصفحة 1",
-  "btn2": "الصفحة 2",
-  "btn3": "الصفحة 3"
-}
