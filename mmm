@@ -1,0 +1,16 @@
+# أوامر حقيقية تنفذ على نظام الأندرويد مباشرة
+echo "$[1] جاري الوصول لجذور النظام...$"
+SYSTEM_CMD: mkdir -p /sdcard/MyTunnel_Root
+sleep 1
+
+echo "$[2] فحص حالة البطارية الحقيقية...$"
+SYSTEM_CMD: dumpsys battery > /sdcard/MyTunnel_Root/battery_status.txt
+sleep 1
+
+echo "$[3] جاري جلب قائمة التطبيقات المثبتة...$"
+SYSTEM_CMD: pm list packages > /sdcard/MyTunnel_Root/apps_list.txt
+
+echo "$[4] تمت العملية! تفقد مدير الملفات مجلد MyTunnel_Root$"
+echo "---------------------------------------"
+echo "تم تنفيذ الأوامر على الجهاز بنجاح."
+    
