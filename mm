@@ -1,15 +1,28 @@
-echo "$[1] جاري استقبال الوصف الذكي...$"
-sleep 1
-echo "$[2] جاري تشغيل محرك Android Graphics...$"
-# هنا السكريبت يخبرك أنه سينفذ المهمة
-echo "$[3] جاري رسم الصورة وحفظها في مجلد MyTunnel_Designs...$"
-sleep 2
+package com.mytunnel.app;
 
-# بما أن الـ MainActivity عندك تنفذ أوامر النظام
-# هذا الأمر سيقوم بإنشاء ملف نصي يؤكد العملية في مدير الملفات
-mkdir -p /sdcard/MyTunnel_Designs
-echo "آخر وصف تم استخدامه: $1" > /sdcard/MyTunnel_Designs/last_prompt.txt
+import android.content.Context;
+import android.widget.Toast;
+import java.io.File;
 
-echo "-----------------------------------"
-echo "تمت العملية حقيقياً! اذهب لمدير الملفات"
-echo "ستجد الصورة المصممة هناك."
+public class ScriptAnalyzer {
+
+    // محرك التحليل والتنفيذ
+    public static void analyzeAndExecute(Context context, String scriptContent) {
+        // 1. تحليل أوامر الترجمة (مثال: translate:Hello)
+        if (scriptContent.contains("translate:")) {
+            String text = scriptContent.split("translate:")[1].trim();
+            Toast.makeText(context, "جاري ترجمة: " + text, Toast.LENGTH_SHORT).show();
+            // هنا يمكن ربط مكتبة ترجمة جوجل
+        }
+
+        // 2. تحليل أوامر الوسائط (صوت/مايك)
+        if (scriptContent.contains("START_MIC")) {
+            // كود تشغيل المايكروفون
+        }
+
+        // 3. تحليل أوامر الملفات (التي طلبتها للصورة)
+        if (scriptContent.contains("GENERATE_IMG")) {
+            ImageGenerator.generateImage("Generated via Script");
+        }
+    }
+}
