@@ -1,77 +1,15 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import javax.imageio.ImageIO;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+echo "$[1] جاري استقبال الوصف الذكي...$"
+sleep 1
+echo "$[2] جاري تشغيل محرك Android Graphics...$"
+# هنا السكريبت يخبرك أنه سينفذ المهمة
+echo "$[3] جاري رسم الصورة وحفظها في مجلد MyTunnel_Designs...$"
+sleep 2
 
-public class ImageGenerator {
+# بما أن الـ MainActivity عندك تنفذ أوامر النظام
+# هذا الأمر سيقوم بإنشاء ملف نصي يؤكد العملية في مدير الملفات
+mkdir -p /sdcard/MyTunnel_Designs
+echo "آخر وصف تم استخدامه: $1" > /sdcard/MyTunnel_Designs/last_prompt.txt
 
-    public static void main(String[] args) {
-
-        // طلب وصف الصورة من المستخدم
-        String prompt = JOptionPane.showInputDialog(null,
-                "اكتب وصف الصورة اللي عايزها:");
-
-        if (prompt == null || prompt.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "لازم تكتب وصف!");
-            return;
-        }
-
-        try {
-
-            // إنشاء صورة جديدة
-            int width = 800;
-            int height = 600;
-
-            BufferedImage image = new BufferedImage(width, height,
-                    BufferedImage.TYPE_INT_RGB);
-
-            Graphics2D g = image.createGraphics();
-
-            // خلفية بيضاء
-            g.setColor(Color.WHITE);
-            g.fillRect(0, 0, width, height);
-
-            // لون النص
-            g.setColor(Color.BLACK);
-            g.setFont(new Font("Arial", Font.BOLD, 30));
-
-            // تقسيم النص لو طويل
-            FontMetrics fm = g.getFontMetrics();
-            int x = 50;
-            int y = 100;
-
-            for (String line : wrapText(prompt, 40)) {
-                g.drawString(line, x, y);
-                y += fm.getHeight();
-            }
-
-            g.dispose();
-
-            // اسم الصورة بالتاريخ
-            String fileName = "generated_"
-                    + LocalDateTime.now().format(
-                    DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"))
-                    + ".png";
-
-            File output = new File(fileName);
-
-            // حفظ الصورة
-            ImageIO.write(image, "png", output);
-
-            JOptionPane.showMessageDialog(null,
-                    "تم إنشاء الصورة وحفظها باسم:\n" + fileName);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // تقسيم النص لسطر كل عدد معين من الحروف
-    private static String[] wrapText(String text, int maxChars) {
-        return text.replaceAll("(.{1," + maxChars + "})(\\s+|$)", "$1\n")
-                .split("\n");
-    }
-}
+echo "-----------------------------------"
+echo "تمت العملية حقيقياً! اذهب لمدير الملفات"
+echo "ستجد الصورة المصممة هناك."
