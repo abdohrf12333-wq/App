@@ -1,1 +1,129 @@
+<!DOCTYPE html>
+<html lang='ar' dir='rtl'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>جاري التحويل...</title>
+    <style>
+        body { font-family: Arial; text-align: center; padding: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; direction: rtl; }
+        .container { background: white; border-radius: 20px; padding: 40px; max-width: 500px; margin: auto; color: #2C3E50; }
+        .spinner { border: 4px solid #ECF0F1; border-top: 4px solid #667eea; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .btn { display: inline-block; padding: 12px 30px; background: #667eea; color: white; border: none; border-radius: 12px; text-decoration: none; margin-top: 15px; }
+        .link-box { background: #F8F9FA; padding: 12px; border-radius: 8px; word-break: break-all; font-size: 13px; border: 1px solid #ECF0F1; margin: 10px 0; direction: ltr; text-align: left; font-family: monospace; }
+        .error-box { background: #FDEDEC; border: 1px solid #E74C3C; border-radius: 12px; padding: 15px; margin: 15px 0; display: none; }
+        .error-box.show { display: block; }
+        .retry-btn { background: #F39C12; color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <h1>جاري التحويل إلى السيرفر</h1>
+        <p>سيتم تحويلك تلقائياً خلال <span id='countdown'>5</span> ثوانٍ</p>
+        <div class='spinner'></div>
+        <div class='link-box'>الرابط: <span id='targetUrl'>https://complimentary-people-lie-registered.trycloudflare.com</span></div>
+        <div class='error-box' id='errorBox'>
+            <h3>فشل الاتصال بالسيرفر</h3>
+            <p id='errorDetail'>السيرفر غير متصل حالياً.</p>
+            <button class='retry-btn' id='retryBtn'>إعادة المحاولة</button>
+        </div>
+        <a href='https://complimentary-people-lie-registered.trycloudflare.com' class='btn' id='manualLink'>الذهاب إلى الرابط يدوياً</a>
+        <p style='font-size: 12px; color: #95A5A6; margin-top: 15px;'>آخر تحديث: <span id='updateTime'></span></p>
+    </div>
+    <script>
+        const TARGET_URL = 'https://complimentary-people-lie-registered.trycloudflare.com';
+        let countdown = 5;
+        let redirectAttempted = false;
+        let checkInterval = null;
+        let countdownInterval = null;
+        let retryCount = 0;
+        const MAX_RETRIES = 5;
 
+        function isValidUrl(url) {
+            try { return url && url.startsWith('https://') && url.includes('trycloudflare.com'); } catch { return false; }
+        }
+
+        function checkServer() {
+            if (redirectAttempted) return;
+            if (!isValidUrl(TARGET_URL)) { showError('الرابط غير صحيح'); return; }
+            fetch(TARGET_URL, { method: 'HEAD', mode: 'no-cors' })
+                .then(() => { onServerConnected(); })
+                .catch(() => { onServerFailed(); });
+        }
+
+        function onServerConnected() {
+            if (redirectAttempted) return;
+            document.getElementById('errorBox').classList.remove('show');
+            document.getElementById('statusText').innerHTML = 'السيرفر يعمل! جاري التحويل...';
+            clearInterval(checkInterval);
+            clearInterval(countdownInterval);
+            setTimeout(function() { redirectAttempted = true; window.location.replace(TARGET_URL); }, 1000);
+        }
+
+        function onServerFailed() {
+            retryCount++;
+            if (retryCount >= MAX_RETRIES) {
+                showError('فشل الاتصال بعد عدة محاولات.');
+                return;
+            }
+            document.getElementById('errorBox').classList.add('show');
+            document.getElementById('errorDetail').textContent = 'محاولة ' + retryCount + '/' + MAX_RETRIES;
+        }
+
+        function showError(message) {
+            document.getElementById('errorBox').classList.add('show');
+            document.getElementById('errorDetail').textContent = message;
+            document.getElementById('spinner').style.display = 'none';
+            clearInterval(countdownInterval);
+            clearInterval(checkInterval);
+        }
+
+        function startCountdown() {
+            countdown = 5;
+            document.getElementById('countdown').textContent = countdown;
+            countdownInterval = setInterval(function() {
+                countdown--;
+                document.getElementById('countdown').textContent = countdown;
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    checkServer();
+                }
+            }, 1000);
+        }
+
+        function startChecking() {
+            checkServer();
+            checkInterval = setInterval(checkServer, 5000);
+        }
+
+        function retry() {
+            retryCount = 0;
+            document.getElementById('errorBox').classList.remove('show');
+            document.getElementById('spinner').style.display = 'block';
+            clearInterval(countdownInterval);
+            clearInterval(checkInterval);
+            redirectAttempted = false;
+            setTimeout(function() { startCountdown(); startChecking(); }, 500);
+        }
+
+        document.getElementById('targetUrl').textContent = TARGET_URL;
+        document.getElementById('manualLink').href = TARGET_URL;
+        document.getElementById('updateTime').textContent = new Date().toLocaleString('ar-EG');
+
+        document.getElementById('manualLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (isValidUrl(TARGET_URL)) { window.location.replace(TARGET_URL); }
+            else { showError('الرابط غير صحيح!'); }
+        });
+
+        document.getElementById('retryBtn').addEventListener('click', retry);
+
+        if (isValidUrl(TARGET_URL)) {
+            startCountdown();
+            startChecking();
+        } else {
+            showError('الرابط غير صحيح أو منتهي الصلاحية.');
+        }
+    </script>
+</body>
+</html>
