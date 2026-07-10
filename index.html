@@ -1,24 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset='UTF-8'>
-    <title>جاري التحويل...</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحويل إلى السيرفر</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            padding: 20px;
             direction: rtl;
         }
-        .container { text-align: center; padding: 40px; }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        .icon {
+            font-size: 60px;
+            display: block;
+            margin-bottom: 10px;
+        }
+        h1 {
+            color: #2C3E50;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #7F8C8D;
+            font-size: 14px;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
         .spinner {
-            border: 4px solid rgba(255,255,255,0.3);
-            border-top: 4px solid white;
+            border: 4px solid #ECF0F1;
+            border-top: 4px solid #667eea;
             border-radius: 50%;
             width: 50px;
             height: 50px;
@@ -29,67 +58,253 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .link {
-            color: #FFD700;
-            text-decoration: underline;
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
             cursor: pointer;
+            text-decoration: none;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
         .error {
-            color: #FF6B6B;
+            color: #E74C3C;
             font-size: 14px;
             margin-top: 10px;
+            padding: 10px;
+            background: #FDEDEC;
+            border-radius: 8px;
+            display: none;
+        }
+        .error.show {
+            display: block;
+        }
+        .success {
+            color: #27AE60;
+            font-size: 14px;
+            margin-top: 10px;
+            padding: 10px;
+            background: #EAFAF1;
+            border-radius: 8px;
+            display: none;
+        }
+        .success.show {
+            display: block;
+        }
+        .footer {
+            margin-top: 20px;
+            color: #BDC3C7;
+            font-size: 12px;
+        }
+        .link-box {
+            background: #F8F9FA;
+            padding: 12px;
+            border-radius: 8px;
+            word-break: break-all;
+            font-size: 13px;
+            color: #2C3E50;
+            border: 1px solid #ECF0F1;
+            margin: 10px 0;
+            direction: ltr;
+        }
+        .countdown {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
         }
     </style>
 </head>
 <body>
-    <div class='container'>
-        <h1>🔄 جاري التحويل...</h1>
-        <div class='spinner'></div>
-        <p>سيتم تحويلك إلى الرابط الجديد خلال ثوانٍ</p>
-        <p>
-            <a href='https://logs-timothy-groove-mating.trycloudflare.com' class='link' id='manualLink'>
-                اضغط هنا إذا لم يتم التحويل
-            </a>
-        </p>
-        <p class='error' id='errorMsg'></p>
-        <p style='font-size: 12px; opacity: 0.7; margin-top: 20px;'>
-            تم التحديث: 2026/07/10 06:17:48
-        </p>
-    </div>
-    <script>
-        // محاولة التحويل مع إعادة المحاولة
-        let attempts = 0;
-        const maxAttempts = 5;
-        const targetUrl = 'https://logs-timothy-groove-mating.trycloudflare.com';
 
-        function redirect() {
+    <div class="container" id="mainContainer">
+        <span class="icon">🚀</span>
+        <h1>جاري التحويل إلى السيرفر</h1>
+        <p>سيتم تحويلك تلقائياً خلال <span class="countdown" id="countdown">5</span> ثوانٍ</p>
+        
+        <div class="spinner" id="spinner"></div>
+        
+        <div id="statusMessage">
+            <p style="color: #95A5A6; font-size: 13px;">⏳ جاري الاتصال بالسيرفر...</p>
+        </div>
+
+        <div class="link-box" id="linkBox">
+            الرابط: <span id="targetUrl">https://...</span>
+        </div>
+
+        <div class="error" id="errorMessage">
+            ❌ <span id="errorText">فشل الاتصال بالسيرفر</span>
+        </div>
+
+        <div class="success" id="successMessage">
+            ✅ <span id="successText">تم الاتصال بنجاح!</span>
+        </div>
+
+        <a href="#" class="btn" id="manualLink">🔗 الذهاب إلى الرابط يدوياً</a>
+        
+        <p style="font-size: 12px; color: #95A5A6; margin-top: 15px;">
+            🔄 تم التحديث: <span id="updateTime"></span>
+        </p>
+
+        <div class="footer">
+            <p>© 2024 نظام التحويل الآمن</p>
+        </div>
+    </div>
+
+    <script>
+        // ====== الرابط الهدف (سيتم تحديثه تلقائياً من التطبيق) ======
+        // هذا الرابط سيتغير كل مرة يحدث فيها التطبيق
+        const TARGET_URL = "https://logs-timothy-groove-mating.trycloudflare.com";
+        
+        // ====== المتغيرات ======
+        let countdown = 5;
+        let redirectAttempted = false;
+        let checkInterval = null;
+        let countdownInterval = null;
+
+        // ====== عناصر الصفحة ======
+        const targetUrlSpan = document.getElementById('targetUrl');
+        const countdownSpan = document.getElementById('countdown');
+        const errorDiv = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const successDiv = document.getElementById('successMessage');
+        const successText = document.getElementById('successText');
+        const spinner = document.getElementById('spinner');
+        const statusMsg = document.getElementById('statusMessage');
+        const manualLink = document.getElementById('manualLink');
+        const updateTimeSpan = document.getElementById('updateTime');
+
+        // ====== عرض الرابط الحالي ======
+        targetUrlSpan.textContent = TARGET_URL;
+        manualLink.href = TARGET_URL;
+
+        // ====== عرض وقت التحديث ======
+        const now = new Date();
+        updateTimeSpan.textContent = now.toLocaleString('ar-EG');
+
+        // ====== دالة التحقق من صحة الرابط ======
+        function isValidUrl(url) {
             try {
-                window.location.replace(targetUrl);
-            } catch (e) {
-                document.getElementById('errorMsg').textContent = '⚠️ خطأ في التحويل: ' + e.message;
+                return url.startsWith('https://') && url.includes('trycloudflare.com');
+            } catch {
+                return false;
             }
         }
 
-        // محاولة فورية
-        setTimeout(redirect, 2000);
+        // ====== دالة التحقق من السيرفر ======
+        function checkServer() {
+            if (redirectAttempted) return;
+            
+            fetch(TARGET_URL, { 
+                method: 'HEAD',
+                mode: 'no-cors',
+                cache: 'no-cache'
+            })
+            .then(() => {
+                // إذا نجح الطلب، قم بالتحويل
+                successDiv.classList.add('show');
+                successText.textContent = 'تم الاتصال بالسيرفر! جاري التحويل...';
+                statusMsg.innerHTML = '<p style="color: #27AE60;">✅ السيرفر يعمل! جاري التحويل...</p>';
+                
+                setTimeout(() => {
+                    window.location.replace(TARGET_URL);
+                }, 1000);
+            })
+            .catch(() => {
+                // إذا فشل الطلب، حاول مرة أخرى
+                errorDiv.classList.add('show');
+                errorText.textContent = 'السيرفر غير متصل حالياً. جاري إعادة المحاولة...';
+                statusMsg.innerHTML = '<p style="color: #E74C3C;">❌ السيرفر غير متصل... إعادة محاولة</p>';
+            });
+        }
 
-        // محاولات إضافية في حالة الفشل
-        const retryInterval = setInterval(function() {
-            attempts++;
-            if (attempts >= maxAttempts) {
-                clearInterval(retryInterval);
-                document.getElementById('errorMsg').textContent = 
-                    '⚠️ لم يتم التحويل تلقائياً. اضغط على الرابط أعلاه.';
+        // ====== دالة التحويل ======
+        function redirect() {
+            if (redirectAttempted) return;
+            
+            // التحقق من صحة الرابط
+            if (!isValidUrl(TARGET_URL)) {
+                errorDiv.classList.add('show');
+                errorText.textContent = 'الرابط غير صحيح! يرجى تحديث الصفحة أو الاتصال بالدعم.';
+                statusMsg.innerHTML = '<p style="color: #E74C3C;">❌ رابط غير صحيح</p>';
+                spinner.style.display = 'none';
                 return;
             }
-            redirect();
-        }, 3000);
 
-        // التحويل عند الضغط على الرابط
-        document.getElementById('manualLink').addEventListener('click', function(e) {
+            // محاولة التحويل
+            try {
+                redirectAttempted = true;
+                window.location.replace(TARGET_URL);
+            } catch (e) {
+                errorDiv.classList.add('show');
+                errorText.textContent = 'حدث خطأ أثناء التحويل: ' + e.message;
+                redirectAttempted = false;
+            }
+        }
+
+        // ====== العد التنازلي ======
+        function startCountdown() {
+            countdownInterval = setInterval(() => {
+                countdown--;
+                countdownSpan.textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownSpan.textContent = '0';
+                    redirect();
+                }
+            }, 1000);
+        }
+
+        // ====== فحص السيرفر بشكل دوري ======
+        function startChecking() {
+            // فحص فوري
+            checkServer();
+            
+            // فحص كل 3 ثواني
+            checkInterval = setInterval(checkServer, 3000);
+        }
+
+        // ====== بدء العملية ======
+        function init() {
+            // إذا كان الرابط صحيحاً
+            if (isValidUrl(TARGET_URL)) {
+                startCountdown();
+                startChecking();
+            } else {
+                errorDiv.classList.add('show');
+                errorText.textContent = '⚠️ الرابط غير صحيح أو منتهي الصلاحية. يرجى تحديث السيرفر.';
+                statusMsg.innerHTML = '<p style="color: #E74C3C;">⚠️ رابط غير صحيح</p>';
+                spinner.style.display = 'none';
+            }
+        }
+
+        // ====== زر التحويل اليدوي ======
+        manualLink.addEventListener('click', function(e) {
             e.preventDefault();
-            window.location.replace(targetUrl);
+            if (isValidUrl(TARGET_URL)) {
+                window.location.replace(TARGET_URL);
+            } else {
+                errorDiv.classList.add('show');
+                errorText.textContent = '⚠️ الرابط غير صحيح! يرجى تحديث السيرفر.';
+            }
         });
+
+        // ====== بدء التشغيل ======
+        init();
+
+        console.log('🚀 صفحة التحويل جاهزة!');
+        console.log('🔗 الرابط المستهدف:', TARGET_URL);
+        console.log('⏳ سيتم التحويل خلال 5 ثوانٍ...');
     </script>
+
 </body>
 </html>
